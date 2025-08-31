@@ -66,4 +66,121 @@
 <body>
     <div id="question-container"></div>
     <div id="answers-container"></div>
-    <div id="feedback
+    <div id="feedback"></div>
+    <div id="error"></div>
+
+    <script>
+        // Fallback questions in case questions.json fails to load
+        const fallbackQuestions = [
+            {
+                question: "What is 6 × 7?",
+                answers: ["42", "36", "48", "40"],
+                correct: "42"
+            },
+            {
+                question: "What is 12 ÷ 3?",
+                answers: ["3", "4", "6", "2"],
+                correct: "4"
+            },
+            {
+                question: "What is 15 + 9?",
+                answers: ["22", "24", "23", "25"],
+                correct: "24"
+            },
+            {
+                question: "Find \\dfrac{2}{5} of 30",
+                answers: ["12", "6", "15", "10"],
+                correct: "12"
+            }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex;
+        let startTime;
+
+        async function loadQuestions() {
+            try {
+                const response = await fetch('questions.json');
+                if (!response.ok) {
+                    throw new Error(`Failed to load questions.json: ${response.statusText}`);
+                }
+                questions = await response.json();
+                loadQuestion();
+            } catch (error) {
+                console.error('Fetch error:', error);
+                document.getElementById('error').textContent = `Error loading questions.json: ${error.message}. Using fallback questions.`;
+                questions = fallbackQuestions;
+                loadQuestion();
+            }
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadQuestion() {
+            if (questions.length === 0) {
+                document.getElementById('error').textContent = 'No questions available.';
+                return;
+            }
+            currentQuestionIndex = Math.floor(Math.random() * questions.length);
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question-container').textContent = question.question;
+
+            // Wait for MathJax to be ready before typesetting
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise().catch(err => {
+                    console.error('MathJax typesetting error:', err);
+                    document.getElementById('error').textContent = 'Error rendering LaTeX, but quiz continues.';
+                });
+            } else {
+                document.getElementById('error').textContent = 'MathJax not loaded, displaying raw question text.';
+            }
+
+            const answersContainer = document.getElementById('answers-container');
+            answersContainer.innerHTML = '';
+            const shuffledAnswers = shuffle([...question.answers]);
+            const labels = ['a)', 'b)', 'c)', 'd)'];
+            shuffledAnswers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.textContent = `${labels[index]} ${answer}`;
+                button.className = 'answer-btn';
+                button.onclick = () => checkAnswer(answer, question.correct);
+                answersContainer.appendChild(button);
+            });
+
+            document.getElementById('feedback').textContent = '';
+            startTime = Date.now();
+        }
+
+        function checkAnswer(selected, correct) {
+            const endTime = Date.now();
+            const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
+            const feedback = document.getElementById('feedback');
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent.includes(correct)) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent.includes(selected)) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            if (selected === correct) {
+                feedback.textContent = `Correct! Time taken: ${timeTaken}s`;
+                setTimeout(loadQuestion, 1000);
+            } else {
+                feedback.textContent = `Incorrect. The correct answer is ${correct}. Time taken: ${timeTaken}s`;
+                setTimeout(loadQuestion, 1500);
+            }
+        }
+
+        loadQuestions();
+    </script>
+</body>
+</html>
