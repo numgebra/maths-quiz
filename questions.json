@@ -1,0 +1,18 @@
+
+[
+    {
+        "question": "What is 6 × 7?",
+        "answers": ["42", "36", "48", "40"],
+        "correct": "42"
+    },
+    {
+        "question": "What is 12 ÷ 3?",
+        "answers": ["3", "4", "6", "2"],
+        "correct": "4"
+    },
+    {
+        "question": "What is 15 + 9?",
+        "answers": ["22", "24", "23", "25"],
+        "correct": "24"
+    }
+]
