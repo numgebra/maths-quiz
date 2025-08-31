@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Quiz</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -84,6 +86,11 @@
                 question: "What is 15 + 9?",
                 answers: ["22", "24", "23", "25"],
                 correct: "24"
+            },
+            {
+                question: "Find \\(\\dfrac{2}{5}\\) of 30",
+                answers: ["12", "6", "15", "10"],
+                correct: "12"
             }
         ];
 
@@ -123,6 +130,7 @@
             currentQuestionIndex = Math.floor(Math.random() * questions.length);
             const question = questions[currentQuestionIndex];
             document.getElementById('question-container').textContent = question.question;
+            MathJax.typesetPromise(); // Render LaTeX after setting question
 
             const answersContainer = document.getElementById('answers-container');
             answersContainer.innerHTML = '';
