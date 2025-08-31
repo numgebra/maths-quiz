@@ -1,4 +1,3 @@
-
 [
     {
         "question": "What is 6 × 7?",
@@ -14,5 +13,10 @@
         "question": "What is 15 + 9?",
         "answers": ["22", "24", "23", "25"],
         "correct": "24"
+    },
+    {
+        "question": "Find \\dfrac{2}{5} of 30",
+        "answers": ["12", "6", "15", "10"],
+        "correct": "12"
     }
 ]
