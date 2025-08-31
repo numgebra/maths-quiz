@@ -16,7 +16,7 @@
         "correct": "24"
     },
     {
-        "question": "Find \\dfrac{2}{5} of 30",
+        "question": "Find $\dfrac{2}{5} of 30$",
         "answers": ["12", "6", "15", "10"],
         "correct": "12"
     }
